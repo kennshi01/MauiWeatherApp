@@ -1,10 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MauiWeatherApp.Services;
 
 namespace MauiWeatherApp.Models.ViewModels;
 
 internal partial class WeatherInfoPageViewModel : ObservableObject
 {
+    private readonly WeatherApiService _weatherApiService;
+    public WeatherInfoPageViewModel()
+    {
+        _weatherApiService = new WeatherApiService();
+    }
+
     [ObservableProperty]
     private string latitude;
 
@@ -33,8 +40,18 @@ internal partial class WeatherInfoPageViewModel : ObservableObject
     private string isDay;
 
     [RelayCommand]
-    private async Task FetchWeatherInformationAsync()
+    private async Task FetchWeatherInformation()
     {
-
+        var weatherApiResponse = await _weatherApiService.GetWeatherInformation(Latitude, Longitude);
+        if (weatherApiResponse != null)
+        {
+            WeatherIcon = weatherApiResponse.Current.WeatherIcons[0];
+            Temperature = $"{weatherApiResponse.Current.Temperature}°C";
+            Location = $"{weatherApiResponse.Location.Name}, {weatherApiResponse.Location.Region}, {weatherApiResponse.Location.Country}";
+            WeatherDescription = weatherApiResponse.Current.WeatherDescriptions[0];
+            Humidity = $"{weatherApiResponse.Current.Humidity}%";
+            CloudCoverLevel = $"{weatherApiResponse.Current.CloudCover}%";
+            IsDay = weatherApiResponse.Current.IsDay.ToUpper();
+        }
     }
 }
