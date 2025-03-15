@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using WeatherApp.Models.ViewModels;
+using WeatherApp.Services;
 
 namespace WeatherApp;
 
@@ -14,6 +16,10 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
+
+		builder.Services.AddSingleton<HttpClient>();
+		builder.Services.AddSingleton<IWeatherService, OpenMeteoService>();
+		builder.Services.AddSingleton<TestWeatherViewModel>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
