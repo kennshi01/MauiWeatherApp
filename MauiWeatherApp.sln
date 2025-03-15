@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiWeatherApp", "MauiWeatherApp\MauiWeatherApp.csproj", "{B94FE7C3-092B-4605-AA9C-744C31DA8098}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherApp", "WeatherApp\WeatherApp.csproj", "{6973E0D9-9E95-454C-9F40-DF20DC099308}"
 EndProject
 Global
@@ -13,14 +11,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B94FE7C3-092B-4605-AA9C-744C31DA8098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B94FE7C3-092B-4605-AA9C-744C31DA8098}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B94FE7C3-092B-4605-AA9C-744C31DA8098}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{B94FE7C3-092B-4605-AA9C-744C31DA8098}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B94FE7C3-092B-4605-AA9C-744C31DA8098}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B94FE7C3-092B-4605-AA9C-744C31DA8098}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{6973E0D9-9E95-454C-9F40-DF20DC099308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6973E0D9-9E95-454C-9F40-DF20DC099308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6973E0D9-9E95-454C-9F40-DF20DC099308}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{6973E0D9-9E95-454C-9F40-DF20DC099308}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6973E0D9-9E95-454C-9F40-DF20DC099308}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
