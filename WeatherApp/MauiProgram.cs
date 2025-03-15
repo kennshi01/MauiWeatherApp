@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using LiveChartsCore.SkiaSharpView.Maui;
+using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using WeatherApp.Models.ViewModels;
 using WeatherApp.Services;
 
@@ -16,6 +18,8 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
+		
+		builder.UseSkiaSharp().UseLiveCharts();
 
 		builder.Services.AddSingleton<HttpClient>();
 		builder.Services.AddSingleton<IWeatherService, OpenMeteoService>();

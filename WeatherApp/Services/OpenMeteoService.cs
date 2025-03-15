@@ -60,4 +60,28 @@ public class OpenMeteoService : IWeatherService
 			return null;
 		}
 	}
+
+	public async Task<HourlyForecastData?> GetHourlyForecastAsync(double latitude, double longitude)
+	{
+		try
+		{
+			string url = $"{BASE_URL}?latitude={latitude}&longitude={longitude}&hourly=temperature_2m&timezone=auto";
+			var response = await _httpClient.GetStringAsync(url);
+
+			if (string.IsNullOrEmpty(response))
+				return null;
+
+			var hourlyForecastData = JsonSerializer.Deserialize<HourlyForecastData>(response, new JsonSerializerOptions
+			{
+				PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+			});
+
+			return hourlyForecastData;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error fetching hourly forecast: {ex.Message}");
+			return null;
+		}
+	}
 }

@@ -15,6 +15,8 @@ public partial class App : Application
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		return new Window(new TestWeatherPage(_weatherService));
+		// For testing purposes, TestPage
+		//return new Window(new TestWeatherPage(_weatherService));
+		return new Window(new MainPage(_weatherService));
 	}
 }

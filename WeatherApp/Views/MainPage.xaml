@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:WeatherApp.ViewModels"
+             xmlns:charts="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             x:Class="WeatherApp.Views.MainPage"
+             x:DataType="vm:MainViewModel"
+             Title="Weather App">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Button Text="Load Weather" Command="{Binding LoadWeatherCommand}" />
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+
+            <!-- Current Weather Section -->
+            <Border Padding="15" BackgroundColor="LightBlue" Stroke="DarkBlue" StrokeThickness="2">
+                <VerticalStackLayout>
+                    <Label Text="Current Weather" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Text="{Binding CurrentWeather.CurrentWeather.Temperature, StringFormat='Temperature: {0}°C'}"
+                       FontSize="22" HorizontalOptions="Center"/>
+                    <Label Text="{Binding CurrentWeather.CurrentWeather.WindSpeed, StringFormat='Wind Speed: {0} km/h'}"
+                       FontSize="18" HorizontalOptions="Center"/>
+                    <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}"
+                       FontSize="18" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Forecast Chart (24-Hour Temperature Trend) -->
+            <Label Text="Temperature Trend (Next 24 Hours)" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <charts:CartesianChart Series="{Binding TemperatureChartSeries}"
+                               XAxes="{Binding TemperatureChartXAxis}"
+                               HeightRequest="250"
+                               BackgroundColor="Transparent"/>
+
+            <!-- 5-Day Forecast Chart -->
+            <Label Text="5-Day Forecast (Temperature Range)" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <charts:CartesianChart Series="{Binding FiveDayForecastSeries}"
+                       XAxes="{Binding FiveDayForecastXAxis}"
+                       HeightRequest="250"
+                       BackgroundColor="Transparent"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
