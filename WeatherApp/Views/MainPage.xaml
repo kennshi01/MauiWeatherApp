@@ -14,18 +14,43 @@
 
             <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
 
-            <!-- Current Weather Section -->
-            <Border Padding="15" BackgroundColor="LightBlue" Stroke="DarkBlue" StrokeThickness="2">
-                <VerticalStackLayout>
-                    <Label Text="Current Weather" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    <Label Text="{Binding CurrentWeather.CurrentWeather.Temperature, StringFormat='Temperature: {0}°C'}"
-                       FontSize="22" HorizontalOptions="Center"/>
-                    <Label Text="{Binding CurrentWeather.CurrentWeather.WindSpeed, StringFormat='Wind Speed: {0} km/h'}"
-                       FontSize="18" HorizontalOptions="Center"/>
-                    <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}"
-                       FontSize="18" HorizontalOptions="Center"/>
-                </VerticalStackLayout>
-            </Border>
+        <!-- Current Weather Section -->
+        <Border StrokeThickness="2" Stroke="LightBlue" BackgroundColor="White" Padding="15">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="20"/>
+            </Border.StrokeShape>
+    
+            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                <!-- Location Name -->
+                <Label Text="{Binding LocationName}" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       TextColor="DarkBlue"/>
+        
+                <!-- Weather Condition (Text + Emoji) -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                        <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}" 
+                           FontSize="22" 
+                           TextColor="Black"/>
+                </HorizontalStackLayout>
+
+                <!-- Temperature -->
+                <Label Text="{Binding CurrentWeather.CurrentWeather.Temperature, StringFormat='{0}°C'}" 
+                       FontSize="50" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="DarkBlue"/>
+
+                <!-- Wind Speed -->
+                <Label Text="{Binding CurrentWeather.CurrentWeather.WindSpeed, StringFormat='Wind: {0} km/h'}" 
+                       FontSize="18" 
+                       HorizontalOptions="Center" 
+                       TextColor="Gray"/>
+            </VerticalStackLayout>
+        </Border>
+
 
             <!-- Forecast Chart (24-Hour Temperature Trend) -->
             <Label Text="Temperature Trend (Next 24 Hours)" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>

@@ -15,6 +15,9 @@ public partial class MainViewModel : ObservableObject
     private readonly IWeatherService _weatherService;
 
     [ObservableProperty]
+    private string locationName;
+
+    [ObservableProperty]
     private WeatherData? currentWeather;
 
     [ObservableProperty]
@@ -39,34 +42,74 @@ public partial class MainViewModel : ObservableObject
         _weatherService = weatherService;
     }
 
-    [RelayCommand]
-    public async Task LoadWeatherAsync()
-    {
-        IsLoading = true;
+	[RelayCommand]
+	public async Task LoadWeatherAsync()
+	{
+		IsLoading = true;
 
-        // Clear previous data
-        TemperatureChartSeries.Clear();
-        TemperatureChartXAxis.Clear();
-        FiveDayForecastSeries.Clear();
-        FiveDayForecastXAxis.Clear();
+		// Clear previous data
+		TemperatureChartSeries.Clear();
+		TemperatureChartXAxis.Clear();
+		FiveDayForecastSeries.Clear();
+		FiveDayForecastXAxis.Clear();
 
-        double latitude = 47.0;  // Example: Moldova
-        double longitude = 28.8;
+		// Request location permission
+		var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+		if (status != PermissionStatus.Granted)
+		{
+			// Handle permission not granted
+			IsLoading = false;
+			return;
+		}
 
-        CurrentWeather = await _weatherService.GetCurrentWeatherAsync(latitude, longitude);
-        Forecast = await _weatherService.GetWeatherForecastAsync(latitude, longitude);
-        HourlyForecast = await _weatherService.GetHourlyForecastAsync(latitude, longitude);
+		// Get the user's current location
+		var location = await Geolocation.GetLastKnownLocationAsync();
+		if (location == null)
+		{
+			location = await Geolocation.GetLocationAsync(new GeolocationRequest
+			{
+				DesiredAccuracy = GeolocationAccuracy.Medium,
+				Timeout = TimeSpan.FromSeconds(30)
+			});
+		}
 
-        PopulateTemperatureChart();
-        PopulateFiveDayForecastChart();
+		if (location == null)
+		{
+			// Handle location not available
+			IsLoading = false;
+			return;
+		}
 
-        IsLoading = false;
-    }
+		double latitude = location.Latitude;
+		double longitude = location.Longitude;
 
-    /// <summary>
-    /// Populates the 24-hour temperature trend chart.
-    /// </summary>
-    private void PopulateTemperatureChart()
+		// Perform reverse geocoding to get the location name
+		var placemarks = await Geocoding.GetPlacemarksAsync(latitude, longitude);
+		var placemark = placemarks?.FirstOrDefault();
+		if (placemark != null)
+		{
+			LocationName = $"{placemark.Locality}, {placemark.AdminArea}";
+		}
+		else
+		{
+			LocationName = "Unknown Location";
+		}
+
+		CurrentWeather = await _weatherService.GetCurrentWeatherAsync(latitude, longitude);
+		Forecast = await _weatherService.GetWeatherForecastAsync(latitude, longitude);
+		HourlyForecast = await _weatherService.GetHourlyForecastAsync(latitude, longitude);
+
+		PopulateTemperatureChart();
+		PopulateFiveDayForecastChart();
+
+		IsLoading = false;
+	}
+
+
+	/// <summary>
+	/// Populates the 24-hour temperature trend chart.
+	/// </summary>
+	private void PopulateTemperatureChart()
     {
         if (HourlyForecast != null && HourlyForecast.Hourly != null)
         {
