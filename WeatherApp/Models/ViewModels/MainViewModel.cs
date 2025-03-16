@@ -137,41 +137,52 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Populates the 5-day max/min temperature trend chart.
-    /// </summary>
-    private void PopulateFiveDayForecastChart()
-    {
-        if (Forecast != null && Forecast.Daily != null)
-        {
-            var days = Forecast.Daily.Time.Take(5).Select(date => DateTime.Parse(date).ToString("MMM dd")).ToArray();
-            var maxTemperatures = Forecast.Daily.Temperature2mMax.Take(5).Select(t => (double)t).ToArray();
-            var minTemperatures = Forecast.Daily.Temperature2mMin.Take(5).Select(t => (double)t).ToArray();
+	/// <summary>
+	/// Populates the 5-day max/min temperature trend chart.
+	/// </summary>
+	private void PopulateFiveDayForecastChart()
+	{
+		if (Forecast != null && Forecast.Daily != null)
+		{
+			var days = Forecast.Daily.Time.Take(5).Select(date => DateTime.Parse(date).ToString("MMM dd")).ToArray();
+			var maxTemperatures = Forecast.Daily.Temperature2mMax.Take(5).Select(t => (double)t).ToArray();
+			var minTemperatures = Forecast.Daily.Temperature2mMin.Take(5).Select(t => (double)t).ToArray();
 
-            var maxTempSeries = new ColumnSeries<double>
-            {
-                Values = maxTemperatures,
-                Name = "Max Temp",
-                Stroke = new SolidColorPaint(SKColors.Red) { StrokeThickness = 2 },
-                Fill = new SolidColorPaint(SKColors.Red.WithAlpha(100))
-            };
+			// Max Temperature Bar Series (with rounded look effect)
+			var maxTempSeries = new ColumnSeries<double>
+			{
+				Values = maxTemperatures,
+				Name = "Max Temp",
+				Stroke = new SolidColorPaint(SKColors.Orange) { StrokeThickness = 2 },
+				Fill = new SolidColorPaint(SKColors.Orange.WithAlpha(180)),
+				Rx = 10, // Rounded effect on X-axis
+				Ry = 10  // Rounded effect on Y-axis
+			};
 
-            var minTempSeries = new ColumnSeries<double>
-            {
-                Values = minTemperatures,
-                Name = "Min Temp",
-                Stroke = new SolidColorPaint(SKColors.Blue) { StrokeThickness = 2 },
-                Fill = new SolidColorPaint(SKColors.Blue.WithAlpha(100))
-            };
+			// Min Temperature Smooth Line Series
+			var minTempSeries = new LineSeries<double>
+			{
+				Values = minTemperatures,
+				Name = "Min Temp",
+				Stroke = new SolidColorPaint(SKColors.White) { StrokeThickness = 2 },
+				GeometrySize = 6, // Small dot on the line
+				GeometryFill = new SolidColorPaint(SKColors.White),
+				GeometryStroke = new SolidColorPaint(SKColors.White),
+				LineSmoothness = 1 // This makes the line smooth
+			};
 
-            FiveDayForecastSeries.Add(maxTempSeries);
-            FiveDayForecastSeries.Add(minTempSeries);
+			// Clear and add new series
+			FiveDayForecastSeries.Clear();
+			FiveDayForecastSeries.Add(maxTempSeries);
+			FiveDayForecastSeries.Add(minTempSeries);
 
-            FiveDayForecastXAxis.Add(new Axis
-            {
-                Labels = days,
-                TextSize = 12
-            });
-        }
-    }
+			FiveDayForecastXAxis.Clear();
+			FiveDayForecastXAxis.Add(new Axis
+			{
+				Labels = days,
+				TextSize = 12
+			});
+		}
+	}
+
 }

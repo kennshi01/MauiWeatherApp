@@ -28,7 +28,7 @@
                        HorizontalOptions="Center" 
                        TextColor="DarkBlue"/>
         
-                <!-- Weather Condition (Text + Emoji) -->
+                <!-- Weather Condition -->
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
                         <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}" 
                            FontSize="22" 
