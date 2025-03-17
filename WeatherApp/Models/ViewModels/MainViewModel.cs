@@ -43,184 +43,173 @@ public partial class MainViewModel : ObservableObject
         _weatherService = weatherService;
     }
 
-	[RelayCommand]
-	public async Task LoadWeatherAsync()
-	{
-		try
-		{
-			IsLoading = true;
+    [RelayCommand]
+    public async Task LoadWeatherAsync()
+    {
+        try
+        {
+            IsLoading = true;
 
-			// Clear previous data
-			FiveDayForecastSeries.Clear();
-			FiveDayForecastXAxis.Clear();
+            // Clear previous data
+            FiveDayForecastSeries.Clear();
+            FiveDayForecastXAxis.Clear();
 
-			// Request location permission
-			var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
-			if (status != PermissionStatus.Granted)
-			{
-				IsLoading = false;
-				return;
-			}
+            // Request location permission
+            var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            if (status != PermissionStatus.Granted)
+            {
+                IsLoading = false;
+                return;
+            }
 
-			// Get the user's current location (avoid unnecessary calls)
-			var location = await Geolocation.GetLastKnownLocationAsync() ??
-						   await Geolocation.GetLocationAsync(new GeolocationRequest
-						   {
-							   DesiredAccuracy = GeolocationAccuracy.Medium,
-							   Timeout = TimeSpan.FromSeconds(30)
-						   });
+            // Get the user's current location
+            var location = await Geolocation.GetLocationAsync(new GeolocationRequest
+                           {
+                               DesiredAccuracy = GeolocationAccuracy.Medium,
+                               Timeout = TimeSpan.FromSeconds(30)
+                           });
 
-			if (location == null)
-			{
-				LocationName = "Location not available";
-				IsLoading = false;
-				return;
-			}
+            if (location == null)
+            {
+                LocationName = "Location not available";
+                IsLoading = false;
+                return;
+            }
 
-			double latitude = location.Latitude;
-			double longitude = location.Longitude;
+            double latitude = location.Latitude;
+            double longitude = location.Longitude;
 
-			var placemarks = await Geocoding.GetPlacemarksAsync(latitude, longitude);
-			var placemark = placemarks?.FirstOrDefault();
+            var placemarks = await Geocoding.GetPlacemarksAsync(latitude, longitude);
+            var placemark = placemarks?.FirstOrDefault();
 
-			if (placemark != null)
-			{
-				var city = placemark.Locality ?? "Unknown City";
-				var region = placemark.AdminArea ?? "Unknown Region";
+            if (placemark != null)
+            {
+                LocationName = $"{placemark.Locality ?? "Unknown City"}";
+            }
+            else
+            {
+                LocationName = "Unknown Location";
+            }
 
-				// Run UI update on the main thread to prevent crashes
-				MainThread.BeginInvokeOnMainThread(() =>
-				{
-					LocationName = $"{city}, {region}";
-				});
-			}
-			else
-			{
-				LocationName = "Unknown Location";
-			}
+            CurrentWeather = await _weatherService.GetCurrentWeatherAsync(latitude, longitude);
+            Forecast = await _weatherService.GetWeatherForecastAsync(latitude, longitude);
+            HourlyForecast = await _weatherService.GetHourlyForecastAsync(latitude, longitude);
 
-			// Fetch weather data asynchronously
-			var currentWeatherTask = _weatherService.GetCurrentWeatherAsync(latitude, longitude);
-			var forecastTask = _weatherService.GetWeatherForecastAsync(latitude, longitude);
-			var hourlyForecastTask = _weatherService.GetHourlyForecastAsync(latitude, longitude);
+            // Populate forecast data
+            PopulateHourlyForecastList();
+            PopulateFiveDayForecastChart();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching weather data: {ex.Message}");
+            LocationName = "Error loading weather";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
-			await Task.WhenAll(currentWeatherTask, forecastTask, hourlyForecastTask);
 
-			// Assign results after all tasks are completed
-			CurrentWeather = currentWeatherTask.Result;
-			Forecast = forecastTask.Result;
-			HourlyForecast = hourlyForecastTask.Result;
+    /// <summary>
+    /// Populates Hourly Forecast List
+    /// </summary>
+    private void PopulateHourlyForecastList()
+    {
+        if (HourlyForecast?.Hourly == null) return;
 
-			// Populate forecast data
-			PopulateHourlyForecastList();
-			PopulateFiveDayForecastChart();
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Error fetching weather data: {ex.Message}");
-			LocationName = "Error loading weather";
-		}
-		finally
-		{
-			IsLoading = false; // Ensure loading state is reset
-		}
-	}
+        HourlyForecastList.Clear();
 
-	/// <summary>
-	/// Populates Hourly Forecast List
-	/// </summary>
-	private void PopulateHourlyForecastList()
-	{
-		if (HourlyForecast?.Hourly == null) return;
+        DateTime now = DateTime.UtcNow; // Get current UTC time
 
-		HourlyForecastList.Clear();
+        int count = 0;
+        for (int i = 0; i < HourlyForecast.Hourly.Time.Length; i++) // Iterate all forecast hours
+        {
+            DateTime forecastTime = DateTime.Parse(HourlyForecast.Hourly.Time[i], CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
 
-		DateTime now = DateTime.UtcNow; // Get current UTC time
+            if (forecastTime < now)
+                continue; // Skip past hours ✅
 
-		for (int i = 0; i <= 24; i += 3) // Every 3rd hour
-		{
-			DateTime forecastTime = DateTime.Parse(HourlyForecast.Hourly.Time[i], CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+            var temp = $"{HourlyForecast.Hourly.Temperature2m[i]}°C";
+            var precipitation = $"{HourlyForecast.Hourly.PrecipitationProbability[i]}%";
+            var windSpeed = $"{HourlyForecast.Hourly.Windspeed10m[i]} m/s";
+            var weatherText = ConvertWeatherCode(HourlyForecast.Hourly.WeatherCode[i]);
 
-			if (forecastTime < now)
-				continue; // Skip past hours ✅
+            HourlyForecastList.Add(new HourlyForecastItem
+            {
+                Time = forecastTime.ToString("HH:mm"),
+                Temperature = temp,
+                PrecipitationProbability = precipitation,
+                WindSpeed = windSpeed,
+                WeatherText = weatherText
+            });
 
-			var temp = $"{HourlyForecast.Hourly.Temperature2m[i]}°C";
-			var precipitation = $"{HourlyForecast.Hourly.PrecipitationProbability[i]}%";
-			var windSpeed = $"{HourlyForecast.Hourly.Windspeed10m[i]} m/s";
-			var weatherText = ConvertWeatherCode(HourlyForecast.Hourly.WeatherCode[i]);
+            count++;
+            if (count == 24) break;
+        }
+    }
 
-			HourlyForecastList.Add(new HourlyForecastItem
-			{
-				Time = forecastTime.ToString("HH:mm"), // Keep format consistent
-				Temperature = temp,
-				PrecipitationProbability = precipitation,
-				WindSpeed = windSpeed,
-				WeatherText = weatherText
-			});
-		}
-	}
-
-	private string ConvertWeatherCode(int weatherCode)
+    private string ConvertWeatherCode(int weatherCode)
 	{
 		return weatherCode switch
 		{
-			0 => "Clear Sky ☀️",
-			1 or 2 or 3 => "Partly Cloudy ⛅",
-			45 or 48 => "Fog 🌫️",
-			51 or 53 or 55 => "Drizzle 🌦️",
-			61 or 63 or 65 => "Rain 🌧️",
-			71 or 73 or 75 => "Snow ❄️",
+			0 => "☀️",
+			1 or 2 or 3 => "⛅",
+			45 or 48 => "🌫️",
+			51 or 53 or 55 => "🌦️",
+			61 or 63 or 65 => "🌧️",
+			71 or 73 or 75 => "❄️",
 			_ => "Unknown 🌍"
 		};
 	}
 
-	/// <summary>
-	/// Populates the 5-day max/min temperature trend chart.
-	/// </summary>
-	private void PopulateFiveDayForecastChart()
-	{
-		if (Forecast?.Daily == null) return;
+    /// <summary>
+    /// Populates the 5-day max/min temperature trend chart.
+    /// </summary>
+    private void PopulateFiveDayForecastChart()
+    {
+        if (Forecast?.Daily == null) return;
 
-		var days = Forecast.Daily.Time.Take(5)
-					  .Select(date => DateTime.Parse(date).ToString("MMM dd"))
-					  .ToArray();
-		var maxTemperatures = Forecast.Daily.Temperature2mMax.Take(5).Select(t => (double)t).ToArray();
-		var minTemperatures = Forecast.Daily.Temperature2mMin.Take(5).Select(t => (double)t).ToArray();
+        var days = Forecast.Daily.Time.Take(5)
+                      .Select(date => DateTime.Parse(date).ToString("MMM dd"))
+                      .ToArray();
+        var maxTemperatures = Forecast.Daily.Temperature2mMax.Take(5).Select(t => (double)t).ToArray();
+        var minTemperatures = Forecast.Daily.Temperature2mMin.Take(5).Select(t => (double)t).ToArray();
 
-		// Max Temperature Bar Series (Smaller & Softer Color)
-		var maxTempSeries = new ColumnSeries<double>
-		{
-			Values = maxTemperatures,
-			Name = "Max Temp",
-			Stroke = new SolidColorPaint(new SKColor(255, 140, 0)) { StrokeThickness = 0.8f },  // Softer orange
-			Fill = new SolidColorPaint(new SKColor(255, 165, 0, 180)),  // Muted orange with transparency
-			Rx = 3,  // Reduced rounding for better fit
-			Ry = 3
-		};
+        var maxTempSeries = new ColumnSeries<double>
+        {
+            Values = maxTemperatures,
+            Name = "Max Temp",
+            Stroke = new SolidColorPaint(new SKColor(255, 69, 0)) { StrokeThickness = 1f },  // Red-Orange Stroke
+            Fill = new SolidColorPaint(new SKColor(255, 99, 71, 180)),  // Tomato Red with Transparency
+            Rx = 3,  // Rounded edges for bar effect
+            Ry = 3
+        };
 
-		// Min Temperature Smooth Line Series (Thinner & Less Intense White)
-		var minTempSeries = new LineSeries<double>
-		{
-			Values = minTemperatures,
-			Name = "Min Temp",
-			Stroke = new SolidColorPaint(new SKColor(200, 200, 200)) { StrokeThickness = 0.8f },  // Softer white
-			GeometrySize = 4,  // Smaller points for subtle look
-			GeometryFill = new SolidColorPaint(new SKColor(220, 220, 220)),  // Light gray
-			GeometryStroke = new SolidColorPaint(new SKColor(220, 220, 220)),
-			LineSmoothness = 0.8  // Slight curve but not too smooth
-		};
+        // Min Temperature Line Series (Cool Color: Blue)
+        var minTempSeries = new LineSeries<double>
+        {
+            Values = minTemperatures,
+            Name = "Min Temp",
+            Stroke = new SolidColorPaint(new SKColor(30, 144, 255)) { StrokeThickness = 1f },  // Dodger Blue Stroke
+            GeometrySize = 4,  // Small points for subtle look
+            GeometryFill = new SolidColorPaint(new SKColor(70, 130, 180)),  // Steel Blue Fill
+            GeometryStroke = new SolidColorPaint(new SKColor(70, 130, 180)),
+            LineSmoothness = 0.8  // Slight curve but not too smooth
+        };
 
-		// Clear and update the series
-		FiveDayForecastSeries.Clear();
-		FiveDayForecastSeries.Add(maxTempSeries);
-		FiveDayForecastSeries.Add(minTempSeries);
+        // Clear and update the series
+        FiveDayForecastSeries.Clear();
+        FiveDayForecastSeries.Add(maxTempSeries);
+        FiveDayForecastSeries.Add(minTempSeries);
 
-		FiveDayForecastXAxis.Clear();
-		FiveDayForecastXAxis.Add(new Axis
-		{
-			Labels = days,
-			TextSize = 10,  // Smaller labels
-			Padding = new LiveChartsCore.Drawing.Padding(3)
-		});
-	}
+        FiveDayForecastXAxis.Clear();
+        FiveDayForecastXAxis.Add(new Axis
+        {
+            Labels = days,
+            TextSize = 10,  // Smaller labels
+            Padding = new LiveChartsCore.Drawing.Padding(3)
+        });
+    }
+
 }

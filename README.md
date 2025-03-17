@@ -1,7 +1,7 @@
 # WeatherApp
 WeatherApp is a cross-platform weather application built using .NET MAUI. It fetches weather data from the OpenMeteo API and displays it in a user-friendly interface.
 
-![](imgs/{0C155685-2F83-4094-8835-E134E9402F40}.png)
+![alt text](imgs/image.png)
 
 ## Features
 

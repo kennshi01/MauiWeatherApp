@@ -12,118 +12,120 @@
         <ScrollView>
             <VerticalStackLayout Padding="20" Spacing="15">
 
-                <!--<Button Text="Load Weather" Command="{Binding LoadWeatherCommand}" />-->
-
+                <!-- Activity Indicator -->
                 <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
 
-                <!-- Current Weather Section -->
-                <Border BackgroundColor="{DynamicResource BackgroundColor}" 
-                    Padding="15" 
-                    Stroke="{DynamicResource BorderColor}"
-                    StrokeShape="RoundRectangle 20">
-                    <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
-                        <!-- Location Name -->
+                <Frame CornerRadius="20"
+                       Padding="20"
+                       BackgroundColor="{DynamicResource CardBackgroundColor}"
+                       HasShadow="True">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+
                         <Label Text="{Binding LocationName}"
-                           FontSize="24"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"
-                           TextColor="{DynamicResource TextPrimaryColor}" />
-
-                        <!-- Weather Condition -->
-                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
-                            <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}"
                                FontSize="22"
-                               TextColor="{DynamicResource TextSecondaryColor}" />
-                        </HorizontalStackLayout>
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{DynamicResource TextPrimaryColor}" />
 
-                        <!-- Temperature -->
+                        <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}"
+                               FontSize="18"
+                               TextColor="{DynamicResource TextSecondaryColor}"
+                               HorizontalOptions="Center"/>
+
                         <Label Text="{Binding CurrentWeather.CurrentWeather.Temperature, StringFormat='{0}°C'}"
-                           FontSize="50"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           TextColor="{DynamicResource PrimaryColor}" />
+                               FontSize="50"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="{DynamicResource PrimaryColor}" />
 
-                        <!-- Wind Speed -->
                         <Label Text="{Binding CurrentWeather.CurrentWeather.WindSpeed, StringFormat='Wind: {0} km/h'}"
-                           FontSize="18"
-                           HorizontalOptions="Center"
-                           TextColor="{DynamicResource TextSecondaryColor}" />
+                               FontSize="16"
+                               HorizontalOptions="Center"
+                               TextColor="{DynamicResource TextSecondaryColor}" />
+
                     </VerticalStackLayout>
-                </Border>
+                </Frame>
 
+                <!-- Hourly Forecast Section -->
                 <Label Text="Hourly Forecast"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="{DynamicResource TextPrimaryColor}"
-                   Margin="0,5,0,5"/>
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="{DynamicResource TextPrimaryColor}" />
 
-                <CollectionView ItemsSource="{Binding HourlyForecastList}"
-                            ItemsLayout="HorizontalList"
-                            HeightRequest="130"
-                            Margin="10,0,10,10">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:HourlyForecastItem">
-                            <Frame CornerRadius="10"
-                               Padding="8"
-                               BackgroundColor="{DynamicResource CardBackgroundColor}"
-                               HasShadow="True"
-                               WidthRequest="85"
-                               Opacity="0.95">
-                                <VerticalStackLayout Spacing="3"
-                                                 HorizontalOptions="Center"
-                                                 VerticalOptions="Center">
+                <Frame CornerRadius="15"
+                       Padding="10"
+                       BackgroundColor="{DynamicResource CardBackgroundColor}"
+                       HasShadow="True">
+                    <CollectionView ItemsSource="{Binding HourlyForecastList}"
+                                    ItemsLayout="HorizontalList"
+                                    HeightRequest="133">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:HourlyForecastItem">
+                                <Frame CornerRadius="10"
+                                       Padding="10"
+                                       BackgroundColor="{DynamicResource CardBackgroundColor}"
+                                       HasShadow="True"
+                                       WidthRequest="85">
+                                    <VerticalStackLayout Spacing="3"
+                                                         HorizontalOptions="Center"
+                                                         VerticalOptions="Center">
 
-                                    <Label Text="{Binding Time}" 
-                                       FontSize="12" 
-                                       FontAttributes="Bold"
-                                       TextColor="{DynamicResource TextSecondaryColor}" 
-                                       HorizontalOptions="Center"/>
+                                        <Label Text="{Binding Time}" 
+                                               FontSize="12" 
+                                               FontAttributes="Bold"
+                                               TextColor="{DynamicResource TextSecondaryColor}" 
+                                               HorizontalOptions="Center"/>
 
-                                    <Label Text="{Binding WeatherText}" 
-                                       FontSize="14"  
-                                       FontAttributes="Bold"
-                                       TextColor="{DynamicResource TextPrimaryColor}" 
-                                       HorizontalOptions="Center"/>
+                                        <Label Text="{Binding WeatherText}" 
+                                               FontSize="20"  
+                                               FontAttributes="Bold"
+                                               TextColor="{DynamicResource TextPrimaryColor}" 
+                                               HorizontalOptions="Center"/>
 
-                                    <Label Text="{Binding Temperature}" 
-                                       FontSize="12" 
-                                       TextColor="{DynamicResource TextPrimaryColor}" 
-                                       HorizontalOptions="Center"/>
+                                        <Label Text="{Binding Temperature}" 
+                                               FontSize="12" 
+                                               TextColor="{DynamicResource TextPrimaryColor}" 
+                                               HorizontalOptions="Center"/>
 
-                                    <HorizontalStackLayout Spacing="2"
-                                                       HorizontalOptions="Center">
-                                        <Label Text="🌧" FontSize="12"/>
-                                        <Label Text="{Binding PrecipitationProbability}" 
-                                           FontSize="10" 
-                                           TextColor="{DynamicResource TextSecondaryColor}" />
-                                    </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="2" HorizontalOptions="Center">
+                                            <Label Text="🌧" FontSize="12"/>
+                                            <Label Text="{Binding PrecipitationProbability}" 
+                                                   FontSize="10" 
+                                                   TextColor="{DynamicResource TextSecondaryColor}" />
+                                        </HorizontalStackLayout>
 
-                                    <HorizontalStackLayout Spacing="2"
-                                                       HorizontalOptions="Center">
-                                        <Label Text="💨" FontSize="12"/>
-                                        <Label Text="{Binding WindSpeed}" 
-                                           FontSize="10" 
-                                           TextColor="{DynamicResource TextSecondaryColor}" />
-                                    </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="2" HorizontalOptions="Center">
+                                            <Label Text="💨" FontSize="12"/>
+                                            <Label Text="{Binding WindSpeed}" 
+                                                   FontSize="10" 
+                                                   TextColor="{DynamicResource TextSecondaryColor}" />
+                                        </HorizontalStackLayout>
 
-                                </VerticalStackLayout>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Frame>
 
-                <!-- 5-Day Forecast Chart -->
-                <Label Text="5-Day Forecast (Temperature Range)" 
-                   FontSize="20" 
-                   FontAttributes="Bold" 
-                   HorizontalOptions="Center" 
-                   TextColor="{DynamicResource TextPrimaryColor}" />
-                <charts:CartesianChart Series="{Binding FiveDayForecastSeries}"
-                                   XAxes="{Binding FiveDayForecastXAxis}"
-                                   HeightRequest="250"
-                                   BackgroundColor="Transparent" />
+                <!-- 5-Day Forecast Section -->
+                <Label Text="5-Day Forecast"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="{DynamicResource TextPrimaryColor}" />
+
+                <Frame CornerRadius="20"
+                       Padding="10"
+                       BackgroundColor="{DynamicResource CardBackgroundColor}"
+                       HasShadow="True">
+                    <charts:CartesianChart Series="{Binding FiveDayForecastSeries}"
+                                           XAxes="{Binding FiveDayForecastXAxis}"
+                                           HeightRequest="250"
+                                           BackgroundColor="Transparent" />
+                </Frame>
 
             </VerticalStackLayout>
         </ScrollView>

@@ -6,6 +6,26 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
+    <!-- Light Theme -->
+    <ResourceDictionary x:Key="LightTheme">
+        <Color x:Key="PrimaryColor">#1976D2</Color>
+        <Color x:Key="TextPrimaryColor">#1C1C1C</Color>
+        <Color x:Key="TextSecondaryColor">#616161</Color>
+        <Color x:Key="BackgroundColor">#F5F5F5</Color>
+        <Color x:Key="BorderColor">#D6D6D6</Color>
+        <Color x:Key="CardBackgroundColor">#FFFFFF</Color>
+    </ResourceDictionary>
+
+    <!-- Dark Theme -->
+    <ResourceDictionary x:Key="DarkTheme">
+        <Color x:Key="PrimaryColor">#82B1FF</Color>
+        <Color x:Key="TextPrimaryColor">#ECECEC</Color>
+        <Color x:Key="TextSecondaryColor">#9E9E9E</Color>
+        <Color x:Key="BackgroundColor">#0E0E0E</Color>
+        <Color x:Key="BorderColor">#292929</Color>
+        <Color x:Key="CardBackgroundColor">#1A1A1A</Color>
+    </ResourceDictionary>
+
     <Color x:Key="Primary">#512BD4</Color>
     <Color x:Key="PrimaryDark">#ac99ea</Color>
     <Color x:Key="PrimaryDarkText">#242424</Color>
