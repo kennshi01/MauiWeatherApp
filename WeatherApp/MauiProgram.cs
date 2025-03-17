@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using WeatherApp.Models.ViewModels;
 using WeatherApp.Services;
+using WeatherApp.ViewModels;
+using WeatherApp.Views;
 
 namespace WeatherApp;
 
@@ -23,6 +25,9 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<HttpClient>();
 		builder.Services.AddSingleton<IWeatherService, OpenMeteoService>();
+		builder.Services.AddSingleton<MainViewModel>();
+		builder.Services.AddSingleton<MainPage>();
+
 		builder.Services.AddSingleton<TestWeatherViewModel>();
 
 #if DEBUG

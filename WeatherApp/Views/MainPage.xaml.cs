@@ -1,13 +1,20 @@
-using WeatherApp.Services;
 using WeatherApp.ViewModels;
 
 namespace WeatherApp.Views;
 
 public partial class MainPage : ContentPage
 {
-	public MainPage(IWeatherService weatherService)
+	private readonly MainViewModel _viewModel;
+
+	public MainPage(MainViewModel viewModel)
 	{
 		InitializeComponent();
-		BindingContext = new MainViewModel(weatherService);
+		BindingContext = _viewModel = viewModel;
+	}
+
+	protected override async void OnAppearing()
+	{
+		base.OnAppearing();
+		await _viewModel.LoadWeatherAsync();
 	}
 }

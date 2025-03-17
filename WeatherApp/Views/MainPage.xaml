@@ -1,71 +1,131 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:WeatherApp.ViewModels"
+             xmlns:models="clr-namespace:WeatherApp.Models"
              xmlns:charts="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              x:Class="WeatherApp.Views.MainPage"
              x:DataType="vm:MainViewModel"
-             Title="Weather App">
+             Title="Weather App"
+             BackgroundColor="{DynamicResource BackgroundColor}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
+    <RefreshView IsRefreshing="{Binding IsLoading}" Command="{Binding LoadWeatherCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Button Text="Load Weather" Command="{Binding LoadWeatherCommand}" />
+                <!--<Button Text="Load Weather" Command="{Binding LoadWeatherCommand}" />-->
 
-            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+                <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
 
-        <!-- Current Weather Section -->
-        <Border StrokeThickness="2" Stroke="LightBlue" BackgroundColor="White" Padding="15">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="20"/>
-            </Border.StrokeShape>
-    
-            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
-                <!-- Location Name -->
-                <Label Text="{Binding LocationName}" 
-                       FontSize="24" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center" 
-                       TextColor="DarkBlue"/>
-        
-                <!-- Weather Condition -->
-                <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
-                        <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}" 
-                           FontSize="22" 
-                           TextColor="Black"/>
-                </HorizontalStackLayout>
+                <!-- Current Weather Section -->
+                <Border BackgroundColor="{DynamicResource BackgroundColor}" 
+                    Padding="15" 
+                    Stroke="{DynamicResource BorderColor}"
+                    StrokeShape="RoundRectangle 20">
+                    <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                        <!-- Location Name -->
+                        <Label Text="{Binding LocationName}"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="{DynamicResource TextPrimaryColor}" />
 
-                <!-- Temperature -->
-                <Label Text="{Binding CurrentWeather.CurrentWeather.Temperature, StringFormat='{0}°C'}" 
-                       FontSize="50" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center" 
-                       VerticalOptions="Center" 
-                       TextColor="DarkBlue"/>
+                        <!-- Weather Condition -->
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                            <Label Text="{Binding CurrentWeather.CurrentWeather.WeatherCode, Converter={StaticResource WeatherCodeToTextConverter}}"
+                               FontSize="22"
+                               TextColor="{DynamicResource TextSecondaryColor}" />
+                        </HorizontalStackLayout>
 
-                <!-- Wind Speed -->
-                <Label Text="{Binding CurrentWeather.CurrentWeather.WindSpeed, StringFormat='Wind: {0} km/h'}" 
-                       FontSize="18" 
-                       HorizontalOptions="Center" 
-                       TextColor="Gray"/>
+                        <!-- Temperature -->
+                        <Label Text="{Binding CurrentWeather.CurrentWeather.Temperature, StringFormat='{0}°C'}"
+                           FontSize="50"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="{DynamicResource PrimaryColor}" />
+
+                        <!-- Wind Speed -->
+                        <Label Text="{Binding CurrentWeather.CurrentWeather.WindSpeed, StringFormat='Wind: {0} km/h'}"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           TextColor="{DynamicResource TextSecondaryColor}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Hourly Forecast"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{DynamicResource TextPrimaryColor}"
+                   Margin="0,5,0,5"/>
+
+                <CollectionView ItemsSource="{Binding HourlyForecastList}"
+                            ItemsLayout="HorizontalList"
+                            HeightRequest="130"
+                            Margin="10,0,10,10">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:HourlyForecastItem">
+                            <Frame CornerRadius="10"
+                               Padding="8"
+                               BackgroundColor="{DynamicResource CardBackgroundColor}"
+                               HasShadow="True"
+                               WidthRequest="85"
+                               Opacity="0.95">
+                                <VerticalStackLayout Spacing="3"
+                                                 HorizontalOptions="Center"
+                                                 VerticalOptions="Center">
+
+                                    <Label Text="{Binding Time}" 
+                                       FontSize="12" 
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextSecondaryColor}" 
+                                       HorizontalOptions="Center"/>
+
+                                    <Label Text="{Binding WeatherText}" 
+                                       FontSize="14"  
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimaryColor}" 
+                                       HorizontalOptions="Center"/>
+
+                                    <Label Text="{Binding Temperature}" 
+                                       FontSize="12" 
+                                       TextColor="{DynamicResource TextPrimaryColor}" 
+                                       HorizontalOptions="Center"/>
+
+                                    <HorizontalStackLayout Spacing="2"
+                                                       HorizontalOptions="Center">
+                                        <Label Text="🌧" FontSize="12"/>
+                                        <Label Text="{Binding PrecipitationProbability}" 
+                                           FontSize="10" 
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                    </HorizontalStackLayout>
+
+                                    <HorizontalStackLayout Spacing="2"
+                                                       HorizontalOptions="Center">
+                                        <Label Text="💨" FontSize="12"/>
+                                        <Label Text="{Binding WindSpeed}" 
+                                           FontSize="10" 
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                    </HorizontalStackLayout>
+
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- 5-Day Forecast Chart -->
+                <Label Text="5-Day Forecast (Temperature Range)" 
+                   FontSize="20" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" 
+                   TextColor="{DynamicResource TextPrimaryColor}" />
+                <charts:CartesianChart Series="{Binding FiveDayForecastSeries}"
+                                   XAxes="{Binding FiveDayForecastXAxis}"
+                                   HeightRequest="250"
+                                   BackgroundColor="Transparent" />
+
             </VerticalStackLayout>
-        </Border>
-
-
-            <!-- Forecast Chart (24-Hour Temperature Trend) -->
-            <Label Text="Temperature Trend (Next 24 Hours)" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
-            <charts:CartesianChart Series="{Binding TemperatureChartSeries}"
-                               XAxes="{Binding TemperatureChartXAxis}"
-                               HeightRequest="250"
-                               BackgroundColor="Transparent"/>
-
-            <!-- 5-Day Forecast Chart -->
-            <Label Text="5-Day Forecast (Temperature Range)" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
-            <charts:CartesianChart Series="{Binding FiveDayForecastSeries}"
-                       XAxes="{Binding FiveDayForecastXAxis}"
-                       HeightRequest="250"
-                       BackgroundColor="Transparent"/>
-
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </RefreshView>
 </ContentPage>

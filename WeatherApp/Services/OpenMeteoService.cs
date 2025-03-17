@@ -65,7 +65,7 @@ public class OpenMeteoService : IWeatherService
 	{
 		try
 		{
-			string url = $"{BASE_URL}?latitude={latitude}&longitude={longitude}&hourly=temperature_2m&timezone=auto";
+			string url = $"{BASE_URL}?latitude={latitude}&longitude={longitude}&hourly=temperature_2m,precipitation_probability,windspeed_10m,weathercode&timezone=auto";
 			var response = await _httpClient.GetStringAsync(url);
 
 			if (string.IsNullOrEmpty(response))
@@ -84,4 +84,5 @@ public class OpenMeteoService : IWeatherService
 			return null;
 		}
 	}
+
 }

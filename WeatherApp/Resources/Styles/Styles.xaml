@@ -4,6 +4,24 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+    <!-- Light Theme -->
+    <ResourceDictionary x:Key="LightTheme">
+        <Color x:Key="PrimaryColor">#2196F3</Color>
+        <Color x:Key="TextPrimaryColor">#212121</Color>
+        <Color x:Key="TextSecondaryColor">#757575</Color>
+        <Color x:Key="BackgroundColor">#FFFFFF</Color>
+        <Color x:Key="BorderColor">#E0E0E0</Color>
+    </ResourceDictionary>
+
+    <!-- Dark Theme -->
+    <ResourceDictionary x:Key="DarkTheme">
+        <Color x:Key="PrimaryColor">#BB86FC</Color>
+        <Color x:Key="TextPrimaryColor">#FFFFFF</Color>
+        <Color x:Key="TextSecondaryColor">#B0B0B0</Color>
+        <Color x:Key="BackgroundColor">#121212</Color>
+        <Color x:Key="BorderColor">#333333</Color>
+    </ResourceDictionary>
+
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
     </Style>

@@ -1,22 +1,16 @@
 ﻿using WeatherApp.Services;
+using WeatherApp.ViewModels;
 using WeatherApp.Views;
 
 namespace WeatherApp;
 
 public partial class App : Application
 {
-	private readonly IWeatherService _weatherService;
-
-	public App()
+	public App(IServiceProvider serviceProvider) // Inject DI container
 	{
-		_weatherService = new OpenMeteoService(new HttpClient());
 		InitializeComponent();
-	}
 
-	protected override Window CreateWindow(IActivationState? activationState)
-	{
-		// For testing purposes, TestPage
-		//return new Window(new TestWeatherPage(_weatherService));
-		return new Window(new MainPage(_weatherService));
+		// Get MainPage from DI (which automatically provides dependencies)
+		MainPage = serviceProvider.GetRequiredService<MainPage>();
 	}
 }

@@ -8,7 +8,7 @@
 
     <VerticalStackLayout Padding="20" Spacing="15">
 
-        <Button Text="Load Weather" Command="{Binding LoadWeatherCommand}" />
+        <!--<Button Text="Load Weather" Command="{Binding LoadWeatherCommand}" />-->
 
         <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
 

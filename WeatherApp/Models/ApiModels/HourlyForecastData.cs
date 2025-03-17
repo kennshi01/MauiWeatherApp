@@ -38,6 +38,15 @@ public class HourlyUnits
 
 	[JsonPropertyName("temperature_2m")]
 	public string Temperature2m { get; set; }
+
+	[JsonPropertyName("precipitation_probability")]
+	public string PrecipitationProbability { get; set; }
+
+	[JsonPropertyName("windspeed_10m")]
+	public string Windspeed10m { get; set; }
+
+	[JsonPropertyName("weathercode")]
+	public string WeatherCode { get; set; }
 }
 
 public class Hourly
@@ -47,4 +56,14 @@ public class Hourly
 
 	[JsonPropertyName("temperature_2m")]
 	public float[] Temperature2m { get; set; }
+
+	[JsonPropertyName("precipitation_probability")]
+	public float[] PrecipitationProbability { get; set; }
+
+	[JsonPropertyName("windspeed_10m")]
+	public float[] Windspeed10m { get; set; }
+
+	[JsonPropertyName("weathercode")]
+	public int[] WeatherCode { get; set; }
 }
+
