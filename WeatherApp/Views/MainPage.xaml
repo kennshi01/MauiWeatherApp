@@ -5,8 +5,16 @@
              xmlns:charts="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              x:Class="WeatherApp.Views.MainPage"
              x:DataType="vm:MainViewModel"
-             Title="Weather App"
-             BackgroundColor="{DynamicResource BackgroundColor}">
+             Title="Weather App">
+
+    <!-- Applying Gradient Background -->
+    <ContentPage.Background>
+        <LinearGradientBrush>
+            <GradientStop Color="#01dbff" Offset="0.0" />
+            <GradientStop Color="#000328" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
 
     <RefreshView IsRefreshing="{Binding IsLoading}" Command="{Binding LoadWeatherCommand}">
         <ScrollView>
@@ -15,10 +23,7 @@
                 <!-- Activity Indicator -->
                 <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
 
-                <Frame CornerRadius="20"
-                       Padding="20"
-                       BackgroundColor="{DynamicResource CardBackgroundColor}"
-                       HasShadow="True">
+
                     <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
 
                         <Label Text="{Binding LocationName}"
@@ -45,8 +50,9 @@
                                TextColor="{DynamicResource TextSecondaryColor}" />
 
                     </VerticalStackLayout>
-                </Frame>
-
+                
+                <BoxView HeightRequest="0.1" Color="Black"/>
+                
                 <!-- Hourly Forecast Section -->
                 <Label Text="Hourly Forecast"
                        FontSize="20"
@@ -54,13 +60,10 @@
                        HorizontalOptions="Center"
                        TextColor="{DynamicResource TextPrimaryColor}" />
 
-                <Frame CornerRadius="15"
-                       Padding="10"
-                       BackgroundColor="{DynamicResource CardBackgroundColor}"
-                       HasShadow="True">
+
                     <CollectionView ItemsSource="{Binding HourlyForecastList}"
                                     ItemsLayout="HorizontalList"
-                                    HeightRequest="133">
+                                    HeightRequest="133" >
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:HourlyForecastItem">
                                 <Frame CornerRadius="10"
@@ -108,7 +111,8 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                </Frame>
+
+                <BoxView HeightRequest="0.1" Color="Black"/>
 
                 <!-- 5-Day Forecast Section -->
                 <Label Text="5-Day Forecast"
